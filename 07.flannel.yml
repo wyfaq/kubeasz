@@ -1,3 +1,4 @@
-- hosts: kube-cluster
+- hosts:
+  - kube-node
   roles:
   - { role: flannel, when: "CLUSTER_NETWORK == 'flannel'" } 
