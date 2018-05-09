@@ -16,6 +16,8 @@ kuberntes 系统使用 etcd 存储所有数据，是最重要的组件之一，�
 
 ### 创建etcd证书请求 [etcd-csr.json.j2](../roles/etcd/templates/etcd-csr.json.j2)
 
+首先判断下是否etcd 证书已经存在，如果已经存在就跳过证书生成步骤
+
 ``` bash
 {
   "CN": "etcd",
@@ -38,7 +40,7 @@ kuberntes 系统使用 etcd 存储所有数据，是最重要的组件之一，�
   ]
 }
 ```
-+ hosts 字段指定授权使用该证书的 etcd 节点 IP
++ etcd使用对等证书，hosts 字段必须指定授权使用该证书的 etcd 节点 IP
 
 ### 创建证书和私钥
 
@@ -109,7 +111,7 @@ systemctl daemon-reload && systemctl enable etcd && systemctl start etcd
 # 根据hosts中配置设置shell变量 $NODE_IPS
 export NODE_IPS="192.168.1.1 192.168.1.2 192.168.1.3"
 $ for ip in ${NODE_IPS}; do
-  ETCDCTL_API=3 /root/local/bin/etcdctl \
+  ETCDCTL_API=3 etcdctl \
   --endpoints=https://${ip}:2379  \
   --cacert=/etc/kubernetes/ssl/ca.pem \
   --cert=/etc/etcd/ssl/etcd.pem \
@@ -126,4 +128,4 @@ https://192.168.1.3:2379 is healthy: successfully committed proposal: took = 3.2
 三台 etcd 的输出均为 healthy 时表示集群服务正常。
 
 
-[前一篇](01-创建CA证书和环境配置.md) -- [后一篇](03-配置kubectl命令行工具.md)
+[前一篇](01-创建CA证书和环境配置.md) -- [后一篇](04-安装docker服务.md)

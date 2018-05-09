@@ -126,6 +126,7 @@ spec:
         args:
         - --ip-masq
         - --kube-subnet-mgr
+        #- --iface=eth1
         resources:
           requests:
             cpu: "100m"
@@ -144,6 +145,11 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: metadata.namespace
+        - name: KUBERNETES_SERVICE_HOST
+          value: "{{ MASTER_IP }}"
+          #value: "{{ KUBE_APISERVER.split(':')[1].lstrip('/') }}"
+        - name: KUBERNETES_SERVICE_PORT
+          value: "{{ KUBE_APISERVER.split(':')[2] }}"
         volumeMounts:
         - name: run
           mountPath: /run
