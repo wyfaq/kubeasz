@@ -20,6 +20,7 @@
   - cfssl-certinfo
   - cfssljson
   - kubectl
+  tags: upgrade_k8s
 
 - name: 安装kubeconfig配置文件
   copy: src=/root/.kube/config dest=/root/.kube/config
@@ -65,6 +66,10 @@
         - firewalld
         - python-firewall
         - firewalld-filesystem
+
+    - name: 添加EPEL仓库
+      yum: name=epel-release state=latest
+
     - name: 安装基础软件包
       yum: name={{ item }}  state=latest
       with_items:
@@ -80,7 +85,7 @@
     - name: 永久关闭 selinux
       lineinfile:
         dest: /etc/selinux/config
-        regexp: "^SELINUX"
+        regexp: "^SELINUX="
         line: "SELINUX=disabled"
   when: ansible_distribution == "CentOS"
 

@@ -1,3 +1,8 @@
+# [可选]操作系统安全加固 https://github.com/dev-sec/ansible-os-hardening
+- hosts: all
+  roles:
+  - { role: os-harden, when: "OS_HARDEN is defined and OS_HARDEN == 'yes'" }
+
 # 在deploy节点生成CA相关证书，以供整个集群使用
 # 以及初始化kubedns.yaml配置文件
 - hosts: deploy
@@ -40,6 +45,10 @@
   - name: 禁止业务 pod调度到 master节点
     shell: "{{ bin_dir }}/kubectl cordon {{ NODE_IP }} "
     when: DEPLOY_MODE != "allinone"
+    ignore_errors: true
+
+  - name: 设置master节点role
+    shell: "{{ bin_dir }}/kubectl label node {{ NODE_IP }} kubernetes.io/role=master --overwrite"
     ignore_errors: true
 
 # node 节点部署
